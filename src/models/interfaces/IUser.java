@@ -1,4 +1,6 @@
-package models;
+package models.interfaces;
+
+import models.User;
 
 public interface IUser {
     public String getLongUrl(String shortUrl);
