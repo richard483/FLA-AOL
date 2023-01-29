@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jan 29, 2023 at 07:00 AM
+-- Generation Time: Jan 29, 2023 at 07:10 AM
 -- Server version: 5.7.33
 -- PHP Version: 7.4.19
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `java`
 --
+CREATE DATABASE IF NOT EXISTS `java` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `java`;
 
 -- --------------------------------------------------------
 
