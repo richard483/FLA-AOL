@@ -178,8 +178,9 @@ public class MenuFacade {
 
         System.out.println();
         int num = 1;
+        System.out.println("No | Id | Name | Link name | Original link ");
         for (ShortLink sl : shortLink) {
-            System.out.println(num + " " + sl.getId() + " " + sl.getLink_name() + " " + sl.getLong_link());
+            System.out.println(num + " | " + sl.getId() + " | " + sl.getLink_name() + " | " + sl.getLong_link());
             num++;
         }
         System.out.println();
@@ -201,8 +202,9 @@ public class MenuFacade {
         System.out.println("VIEW");
         System.out.println("==============");
         System.out.println();
+        System.out.println("No | Id | Name | Link name | Original link ");
         for (ShortLink sl : shortLink) {
-            System.out.println(num + " " + sl.getId() + " " + sl.getLink_name() + " " + sl.getLong_link());
+            System.out.println(num + " | " + sl.getId() + " | " + sl.getLink_name() + " | " + sl.getLong_link());
             num++;
         }
         System.out.println();
