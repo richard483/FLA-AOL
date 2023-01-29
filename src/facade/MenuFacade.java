@@ -1,21 +1,30 @@
 package facade;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
+import builder.UserBuilder;
+import models.Admin;
 import models.Member;
 import models.ProMember;
+import models.ShortLink;
 import models.User;
 import proxy.AuthProxy;
+import proxy.LinkShortenerProxy;
 import repository.DBConnection;
 
 public class MenuFacade {
     Scanner scan = new Scanner(System.in);
     DBConnection dbConnection;
     AuthProxy authProxy;
+    LinkShortenerProxy linkShortProxy;
+    UserBuilder userBuilder;
 
     public MenuFacade() {
         dbConnection = new DBConnection();
         authProxy = new AuthProxy(dbConnection);
+        userBuilder = new UserBuilder();
+
     }
 
     public void showWelcomeMenu() {
@@ -61,7 +70,7 @@ public class MenuFacade {
         do {
             System.out.println("Username : ");
             username = scan.nextLine();
-        } while (!(username.length() > 5) || !(username.length() < 50));
+        } while (username.length() < 5 || username.length() > 50);
         do {
             System.out.println("Password : ");
             password = scan.nextLine();
@@ -74,12 +83,15 @@ public class MenuFacade {
             System.out.println("Press enter to continue ...");
             return;
         } else {
+            System.out.println("Login succesfull");
             System.out.println("Welcome " + authUser.getUsername());
-            // TODO: show shortlink menu
-        }
+            System.out.println("Press enter to continue ...");
+            System.out.println();
 
-        System.out.println("Login succesfull");
-        System.out.println("Press enter to continue ...");
+            linkShortProxy = new LinkShortenerProxy(dbConnection, authUser);
+
+            shortLinkMenu();
+        }
     }
 
     private void showRegisterMenu() {
@@ -96,24 +108,22 @@ public class MenuFacade {
             System.out.print("Please Register Your Username [5 - 50 Characters]: ");
             username = scan.nextLine();
         } while (username.length() < 5 || username.length() > 50);
+        userBuilder.setUsername(username);
+        // melakukan build tiap komponen
 
         do {
             System.out.print("Please Register Your Password [Min 6 Characters]: ");
             password = scan.nextLine();
         } while (password.length() < 6);
+        userBuilder.setPassword(password);
 
         do {
-            System.out.print("Please Choose Account Role [Member | Pro-Member](inclusive): ");
+            System.out.print("Please Choose Account Role [Member | Pro-Member | Admin](inclusive): ");
             role = scan.nextLine();
-        } while (!role.equals("Member") && !role.equals("Pro-Member"));
+        } while (!role.equals("Member") && !role.equals("Pro-Member") && !role.equals("Admin"));
+        userBuilder.setRole(role);
 
-        User registeredUser;
-
-        if (role == "Member") {
-            registeredUser = new Member(username, password, "member");
-        } else {
-            registeredUser = new ProMember(username, password, "pro-member");
-        }
+        User registeredUser = userBuilder.build();
 
         if (!authProxy.register(registeredUser)) {
             System.out.println("Register Failed");
@@ -163,12 +173,73 @@ public class MenuFacade {
     }
 
     private void showDeleteShortLinkMenu() {
+        String link = "";
+        ArrayList<ShortLink> shortLink = linkShortProxy.getAllLinks();
+
+        System.out.println("DELETE");
+        System.out.println("==============");
+
+        System.out.println();
+        int num = 1;
+        for (ShortLink sl : shortLink) {
+            System.out.println(num + " " + sl.getId() + " " + sl.getLink_name() + " " + sl.getLong_link());
+            num++;
+        }
+        System.out.println();
+
+        System.out.print("Select which ShortLink to delete (inclusive): ");
+        link = scan.nextLine();
+
+        if (linkShortProxy.deleteShortUrl(link)) {
+            System.out.println("Link has been deleted!");
+        } else {
+            System.out.println("Link not found!");
+        }
     }
 
     private void showViewShortLinkMenu() {
+        ArrayList<ShortLink> shortLink = linkShortProxy.getAllLinks();
+
+        int num = 1;
+        System.out.println("VIEW");
+        System.out.println("==============");
+        System.out.println();
+        for (ShortLink sl : shortLink) {
+            System.out.println(num + " " + sl.getId() + " " + sl.getLink_name() + " " + sl.getLong_link());
+            num++;
+        }
+        System.out.println();
+
+        System.out.println("Press Enter to Continue...");
+        scan.nextLine();
     }
 
     private void showCreateShortLinkMenu() {
+        String ogLink = "";
+        String name = "";
+
+        System.out.println("CREATE");
+        System.out.println("==============");
+        do {
+            System.out.print("Original Link [Starts with 'https://']: ");
+            ogLink = scan.nextLine();
+        } while (!ogLink.startsWith("https://"));
+        do {
+            System.out.print("ShortLink Name [No spaces]: ");
+            name = scan.nextLine();
+        } while (name.contains(" "));
+
+        if (linkShortProxy.createShortUrl(ogLink, name)) {
+            System.out.println("Link has been shortened!");
+        } else {
+            System.out.println("Link can't be added!");
+        }
+
+        System.out.println();
+
+        System.out.println("Press Enter to Continue...");
+        scan.nextLine();
+        System.out.println("\n");
     }
 
 }

@@ -1,12 +1,16 @@
 package models.interfaces;
 
-import models.User;
+import java.util.ArrayList;
+
+import models.ShortLink;
 
 public interface ILinkShortener {
-    public String getLongUrl(String shortUrl);
+    public ShortLink getLongUrl(String shortUrl);
 
-    public void createShortUrl(String longUrl, String shortUrl, User user);
+    public boolean createShortUrl(String longUrl, String shortUrl);
 
-    public void deleteShortUrl(String shortUrl, User user);
+    public boolean deleteShortUrl(String shortUrl);
+
+    public ArrayList<ShortLink> getAllLinks();
 
 }

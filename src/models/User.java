@@ -1,8 +1,6 @@
 package models;
 
-import models.interfaces.IUser;
-
-public abstract class User implements IUser {
+public abstract class User {
     // untuk member biasa, minimum shortlink namenya adalah 10 karakter
     // untuk member pro, minimum shortlink namenya adalah 1 karakter
     int id;

@@ -5,9 +5,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
+import models.Admin;
 import models.Member;
 import models.ProMember;
+import models.ShortLink;
 import models.User;
 
 public class DBConnection {
@@ -41,9 +44,11 @@ public class DBConnection {
                     "SELECT * FROM `user` WHERE `name` = '" + username + "' AND `password` = '" + password + "'");
             if (resultset.next()) {
                 if (resultset.getString("role").equals("member")) {
-                    return new Member(username, password, resultset.getString("role"));
+                    return new Member(username, password);
+                } else if (resultset.getString("role").equals("pro-member")) {
+                    return new ProMember(username, password);
                 } else {
-                    return new ProMember(username, password, resultset.getString("role"));
+                    return new Admin(username, password);
                 }
             }
         } catch (Exception e) {
@@ -65,5 +70,67 @@ public class DBConnection {
             System.out.println(e);
         }
         return false;
+    }
+
+    public boolean addLink(String linkName, String link) {
+        try {
+            resultset = statement.executeQuery("SELECT * FROM `short-link` WHERE `link_name` = '" + linkName + "'");
+            if (resultset.next()) {
+                System.err.println("Link name already exists");
+                return false;
+            }
+
+            preparableStatement = connection
+                    .prepareStatement("INSERT INTO `short-link` (`link_name`, `long_link`) VALUES (?, ?)");
+            preparableStatement.setString(1, linkName);
+            preparableStatement.setString(2, link);
+            preparableStatement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public ShortLink getLink(String linkName) {
+        try {
+            resultset = statement.executeQuery("SELECT * FROM `short-link` WHERE `link_name` = '" + linkName + "'");
+            if (resultset.next()) {
+                System.out.println(resultset.getString("long_link"));
+                return new ShortLink(Integer.parseInt(resultset.getString("id").toString()),
+                        resultset.getString("link_name"),
+                        resultset.getString("long_link"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+    public boolean removeLink(String linkName) {
+        try {
+            preparableStatement = connection.prepareStatement("DELETE FROM `short-link` WHERE `link_name` = ?");
+            preparableStatement.setString(1, linkName);
+            preparableStatement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public ArrayList<ShortLink> getAllLinks() {
+        ArrayList<ShortLink> links = new ArrayList<ShortLink>();
+        try {
+            resultset = statement.executeQuery("SELECT * FROM `short-link`");
+            while (resultset.next()) {
+                links.add(new ShortLink(Integer.parseInt(resultset.getString("id").toString()),
+                        resultset.getString("link_name"),
+                        resultset.getString("long_link")));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return links;
     }
 }
