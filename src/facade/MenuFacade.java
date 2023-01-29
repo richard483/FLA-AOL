@@ -18,7 +18,7 @@ public class MenuFacade {
     UserBuilder userBuilder;
 
     public MenuFacade() {
-        dbConnection = new DBConnection();
+        dbConnection = DBConnection.getInstance();
         authProxy = new AuthProxy(dbConnection);
         userBuilder = new UserBuilder();
 

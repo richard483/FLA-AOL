@@ -14,12 +14,21 @@ import models.ShortLink;
 import models.User;
 
 public class DBConnection {
-    public Connection connection;
-    public Statement statement;
-    public ResultSet resultset;
-    public PreparedStatement preparableStatement;
+    private Connection connection;
+    private Statement statement;
+    private ResultSet resultset;
+    private PreparedStatement preparableStatement;
+    private static DBConnection dbConnection;
 
-    public DBConnection() {
+    public static DBConnection getInstance() {
+        if (dbConnection == null) {
+            dbConnection = new DBConnection();
+        }
+
+        return dbConnection;
+    }
+
+    private DBConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/java", "root", "");
