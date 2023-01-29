@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import builder.UserBuilder;
-import models.Admin;
-import models.Member;
-import models.ProMember;
 import models.ShortLink;
 import models.User;
 import proxy.AuthProxy;
