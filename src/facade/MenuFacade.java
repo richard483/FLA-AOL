@@ -185,7 +185,7 @@ public class MenuFacade {
         }
         System.out.println();
 
-        System.out.print("Select which ShortLink to delete (inclusive): ");
+        System.out.print("Input ShortLink name to delete (inclusive): ");
         link = scan.nextLine();
 
         if (linkShortProxy.deleteShortUrl(link)) {
