@@ -109,6 +109,10 @@ public class DBConnection {
 
     public boolean removeLink(String linkName) {
         try {
+            resultset = statement.executeQuery("SELECT * FROM `short-link` WHERE `link_name` = '" + linkName + "'");
+            if (!resultset.next()) {
+                return false;
+            }
             preparableStatement = connection.prepareStatement("DELETE FROM `short-link` WHERE `link_name` = ?");
             preparableStatement.setString(1, linkName);
             preparableStatement.executeUpdate();
